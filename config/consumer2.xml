@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="com.rpc.registry.impl.ZooKeeperRegistry" id="registry" >
+        <constructor-arg name="server" value="192.168.126.128:2181"></constructor-arg>
+    </bean>
+   	<bean class="com.rpc.common.ConsumerConfiguration">
+   		<property name="loadBalancerType" value="com.rpc.loadbalancer.impl.RandomLoadBalancer"></property>
+   		<property name="strategyType" value="com.rpc.failover.impl.FailFastStrategy"></property>
+   		<property name="rpcClientType" value="com.rpc.transport.impl.RpcClientImpl"></property>
+   		<property name="registryType" value="registry"></property>
+   		<property name="interfaceScanner">
+   			<map>
+   				<entry key="helloWorldService" value="com.rpc.service.HelloWorldService"/>
+   			</map>
+   		</property>
+   	</bean>
+	
+</beans>

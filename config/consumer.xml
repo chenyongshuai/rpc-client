@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--1. 构建 代理  对象-->
+    <bean id="helloWorldService" class="com.rpc.proxy.DynamicProxy">
+        <constructor-arg name="targetInterface" value="com.rpc.service.HelloWorldService"></constructor-arg>
+        <constructor-arg name="registry" ref="registry"></constructor-arg>
+        <constructor-arg name="strategy" ref="strategy"></constructor-arg>
+    </bean>
+
+    <!--  注册中心  -->
+    <bean id="registry" class="com.rpc.registry.impl.ZooKeeperRegistry">
+        <constructor-arg name="server" value="192.168.126.128:2181"></constructor-arg>
+    </bean>
+
+    <!--  故障  转移  类 -->
+    <bean id="strategy" class="com.rpc.failover.impl.FailFastStrategy">
+        <constructor-arg name="rpcClient" ref="rpcClient"></constructor-arg>
+        <constructor-arg name="loadBalancer" ref="loadBalancer"></constructor-arg>
+    </bean>
+
+    <!--  客户端  通信   初始化  -->
+    <bean id="rpcClient" class="com.rpc.transport.impl.RpcClientImpl" init-method="init" destroy-method="close"></bean>
+    <bean id="loadBalancer" class="com.rpc.loadbalancer.impl.RandomLoadBalancer"></bean>
+
+</beans>
